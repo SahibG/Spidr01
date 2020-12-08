@@ -7,7 +7,9 @@ import 'package:SpidrApp/widgets/widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'gsignin.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'forgotpassword.dart';
 import 'chatRoomsScreen.dart';
 
 class SignIn extends StatefulWidget {
@@ -18,6 +20,7 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   final formKey = GlobalKey<FormState>();
   AuthMethods authMethods = new AuthMethods();
   DatabaseMethods databaseMethods = new DatabaseMethods();
@@ -135,14 +138,19 @@ class _SignInState extends State<SignIn> {
                       ],),
                     ),
                     SizedBox(height:8,),
-                    Container(
-                      alignment: Alignment.centerRight,
-                      child:Container(
+                    GestureDetector(
+                    child: Container(alignment: Alignment.centerRight,
+                      child: FlatButton(
                           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          child: Text("Forgot your Password?", style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,),)
+                          child: Text("Forgot your Password?", style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,decoration: TextDecoration.underline,)),
+                          onPressed:(){
+                           Navigator.push(
+                             context, MaterialPageRoute(builder: (_) => ForgotPasswordScreen()));
+                        }
                       ),
                     ),
-                    SizedBox(height:8,),
+                    ),
+                      SizedBox(height:8,),
                     GestureDetector(
                       onTap: (){
                         signIn();
@@ -168,7 +176,19 @@ class _SignInState extends State<SignIn> {
                       ),
                     ),
                     SizedBox(height:8,),
-                    Container(
+                    GestureDetector(
+                      onTap: (){
+                        signInWithGoogle().whenComplete(() {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return PageViewScreen(0);
+                              },
+                            ),
+                          );
+                        });
+                      },
+                      child:Container(
                       alignment: Alignment.center,
                       width: MediaQuery.of(context).size.width,
                       padding: EdgeInsets.symmetric(vertical: 20),
@@ -185,7 +205,8 @@ class _SignInState extends State<SignIn> {
                         fontWeight: FontWeight.bold
                       )),
                     ),
-                    SizedBox(height:8,),
+                    ),
+                      SizedBox(height:8,),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
